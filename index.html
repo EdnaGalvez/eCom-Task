@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>eCom_task - Gestión de Tareas eCommerce Institute</title>
+  <meta name="description" content="Organiza tus tareas y prepara tus reuniones de sincronización con eCom_task.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- PANEL LATERAL (Sidebar) -->
+    <aside class="sidebar">
+      <!-- Logo -->
+      <div class="logo-container">
+        <img src="logo.png" alt="eCommerce Institute Isotype" class="logo-img">
+        <h1 class="logo-text">eCom_<span>task</span></h1>
+      </div>
+
+      <!-- Panel de Progreso -->
+      <div class="progress-panel">
+        <span class="progress-title">Progreso General</span>
+        <div class="progress-container">
+          <svg class="progress-ring" width="120" height="120">
+            <!-- Círculo de Fondo -->
+            <circle class="progress-ring__circle-bg" stroke="#e2e8f0" stroke-width="8" fill="transparent" r="50" cx="60" cy="60" style="stroke: var(--border-color);"></circle>
+            <!-- Círculo de Progreso -->
+            <circle class="progress-ring__circle" stroke="#18A0D8" stroke-width="8" fill="transparent" r="50" cx="60" cy="60" stroke-dasharray="314.16" stroke-dashoffset="314.16"></circle>
+          </svg>
+          <div class="progress-percentage" id="progressText">0%</div>
+        </div>
+        <div class="progress-stats-text" id="progressStatsText">0 de 0 completadas</div>
+      </div>
+
+      <!-- Sección de Filtros por Estado -->
+      <div class="filter-section">
+        <span class="section-label">Vistas</span>
+        <button class="filter-btn active" data-filter="all" id="btnFilterAll">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+          Todas las tareas
+          <span class="filter-badge" id="badgeAll">0</span>
+        </button>
+        <button class="filter-btn" data-filter="active" id="btnFilterActive">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Pendientes
+          <span class="filter-badge" id="badgeActive">0</span>
+        </button>
+        <button class="filter-btn" data-filter="completed" id="btnFilterCompleted">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Completadas
+          <span class="filter-badge" id="badgeCompleted">0</span>
+        </button>
+
+        <!-- Filtro Especial de Reunión -->
+        <button class="filter-btn highlight-btn" data-filter="meeting" id="btnFilterMeeting">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+          </svg>
+          Modo Reunión
+        </button>
+      </div>
+
+      <!-- Sección de Filtros por Categoría -->
+      <div class="filter-section" id="sidebarCategoriesContainer">
+        <span class="section-label">Categorías</span>
+        <div class="categories-list" id="sidebarCategories">
+          <!-- Categorías inyectadas dinámicamente -->
+        </div>
+      </div>
+
+      <!-- Tema Claro / Oscuro -->
+      <div class="theme-toggle-container">
+        <button class="theme-btn" id="themeToggleBtn" aria-label="Cambiar tema">
+          <span style="font-size: 14px; font-weight: 600;">Modo Oscuro</span>
+          <div class="theme-switch-track">
+            <div class="theme-switch-thumb"></div>
+          </div>
+        </button>
+      </div>
+    </aside>
+
+    <!-- ÁREA DE CONTENIDO PRINCIPAL -->
+    <main class="main-content">
+      <!-- Encabezado y Barra de Búsqueda -->
+      <header class="main-header">
+        <div class="header-greeting">
+          <h2 id="greetingText">¡Hola!</h2>
+          <p id="dateText">Hoy es 26 de mayo de 2026</p>
+        </div>
+        <div class="search-container" id="mainSearchContainer">
+          <input type="text" class="search-input" id="searchInput" placeholder="Buscar tareas...">
+          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+      </header>
+
+      <!-- Formulario para agregar Tarea (Se oculta en modo reunión) -->
+      <section class="task-form-card" id="taskFormSection">
+        <div class="form-inputs-row">
+          <div class="task-input-wrapper">
+            <input type="text" class="task-input-text" id="taskInput" placeholder="¿Qué tienes planeado hacer hoy?">
+          </div>
+        </div>
+
+        <div class="form-config-row">
+          <div class="meta-inputs">
+            <!-- Categoría en formato Chip de selección rápida -->
+            <div class="category-chips" id="categoryChips">
+              <!-- Inyectados desde JS -->
+            </div>
+
+            <!-- Prioridades -->
+            <div class="meta-select-wrapper">
+              <select class="meta-select" id="priorityInput">
+                <option value="low">Prioridad Baja</option>
+                <option value="medium">Prioridad Media</option>
+                <option value="high">Prioridad Alta</option>
+              </select>
+            </div>
+
+            <!-- Fecha límite -->
+            <div class="meta-select-wrapper">
+              <input type="date" class="meta-select" id="dueDateInput">
+            </div>
+          </div>
+
+          <button class="add-task-btn" id="addTaskBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            Añadir Tarea
+          </button>
+        </div>
+      </section>
+
+      <!-- VISTA ESTÁNDAR DE LISTA (Oculta en modo reunión) -->
+      <section id="standardListSection">
+        <div class="list-section-header">
+          <h3 class="list-title" id="listTitle">Tus Tareas</h3>
+          <div class="sorting-controls">
+            <span class="sort-label">Ordenar por:</span>
+            <select class="sort-select" id="sortSelect">
+              <option value="created">Fecha de Creación</option>
+              <option value="due">Fecha de Vencimiento</option>
+              <option value="priority">Prioridad</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Contenedor Dinámico -->
+        <div class="todo-list-container" id="todoListContainer">
+          <!-- Las tareas se generarán desde JavaScript -->
+        </div>
+
+        <!-- Vista cuando no hay tareas -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+          </svg>
+          <div>
+            <h3>¡Todo listo por aquí!</h3>
+            <p style="margin-top: 8px; font-size: 14px;">No tienes tareas en esta sección. Relájate o añade una nueva tarea arriba.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- VISTA MODO REUNIÓN (Visible solo en modo reunión) -->
+      <section id="meetingModeSection" style="display: none;">
+        <!-- Cabecera del modo reunión -->
+        <div class="meeting-header-bar">
+          <div class="meeting-header-info">
+            <span class="meeting-badge-live">MODO REUNIÓN</span>
+            <h3>Sincronización Semanal</h3>
+            <p>Vista optimizada para proyectar y presentar estados del equipo</p>
+          </div>
+          <button class="action-btn copy-report-btn" id="btnCopyReport">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376A8.965 8.965 0 0 0 12 12.75a8.965 8.965 0 0 0-3.75 3.125m9 1.5v-3.375c0-.621-.504-1.125-1.125-1.125h-9.75a1.125 1.125 0 0 0-1.125 1.125V18.75m9-1.5h-9" />
+            </svg>
+            <span>Copiar Reporte (Slack/Teams)</span>
+          </button>
+        </div>
+
+        <!-- Grid de Dos Columnas -->
+        <div class="meeting-grid">
+          <!-- Columna Izquierda: Cumplido (Semana Anterior) -->
+          <div class="meeting-column completed-column">
+            <div class="meeting-column-header">
+              <div class="header-icon-circle done-bg">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <h4>Cumplido (Semana Anterior)</h4>
+                <span class="column-count-sub" id="meetingDoneCount">0 tareas completadas</span>
+              </div>
+            </div>
+            <div class="todo-list-container" id="meetingDoneList">
+              <!-- Completadas inyectadas dinámicamente -->
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Por Hacer (Esta Semana) -->
+          <div class="meeting-column pending-column">
+            <div class="meeting-column-header">
+              <div class="header-icon-circle todo-bg">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M8.25 6.75h12M8.25 12h12M8.25 17.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-1.5 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                </svg>
+              </div>
+              <div>
+                <h4>Por Hacer (Esta Semana)</h4>
+                <span class="column-count-sub" id="meetingTodoCount">0 tareas pendientes</span>
+              </div>
+            </div>
+            <div class="todo-list-container" id="meetingTodoList">
+              <!-- Pendientes inyectadas dinámicamente -->
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
